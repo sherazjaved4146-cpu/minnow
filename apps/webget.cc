@@ -12,9 +12,12 @@ namespace {
 void get_URL( const string& host, const string& path )
 {
 
+  debug( "Function called: get_URL( \"{}\", \"{}\" )", host, path );
+  debug( "get_URL() function not yet implemented" );
+
   TCPSocket socket;
   socket.connect(Address(host,"http"));//\perform 3 way handshaking means form a tcp connection using http protocol
-  string request="GET "+ path + " HTTP/1.1\r\n";
+  string request="GET"+ path + "HTTP/1.1/r/n";
   request+="Host:"+host+"\r\n";
   request+="Connection: close\r\n";
   request+="\r\n";
