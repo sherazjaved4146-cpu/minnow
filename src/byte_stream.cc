@@ -6,6 +6,7 @@ ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ), buffer_() {
 // Push data to stream, but only as much as available capacity allows.
 void Writer::push( string data )
 {
+   if (closed_) return;
   uint64_t bytes_to_push = min( data.size(), available_capacity() );
   buffer_ += data.substr( 0, bytes_to_push );
   bytes_pushed_ += bytes_to_push;
