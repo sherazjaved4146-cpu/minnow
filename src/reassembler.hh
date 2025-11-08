@@ -1,4 +1,5 @@
 #pragma once
+#include<map>
 
 #include "byte_stream.hh"
 
@@ -6,7 +7,7 @@ class Reassembler
 {
 public:
   // Construct Reassembler to write into given ByteStream.
-  explicit Reassembler( ByteStream&& output ) : output_( std::move( output ) ) {}
+  explicit Reassembler( ByteStream&& output ) : output_( std::move( output ) ), internal_storage(), eof_index(0), eof_flag(false) {}
 
   /*
    * Insert a new substring to be reassembled into a ByteStream.
@@ -43,4 +44,7 @@ public:
 
 private:
   ByteStream output_;
+  std::map<uint64_t, std:: string> internal_storage;
+  uint64_t eof_index; //index batata current substring ki k kahan end ho rahi, current substring storage se nikli huii bhi ho sakto
+  bool eof_flag; // or same ussi ka flag
 };
