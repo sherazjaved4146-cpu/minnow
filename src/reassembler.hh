@@ -1,13 +1,16 @@
 #pragma once
-#include<map>
 
+#include <map>
 #include "byte_stream.hh"
 
-class Reassembler
-{
+class Reassembler {
 public:
   // Construct Reassembler to write into given ByteStream.
-  explicit Reassembler( ByteStream&& output ) : output_( std::move( output ) ), internal_storage(), eof_index(0), eof_flag(false) {}
+  explicit Reassembler(ByteStream&& output_stream)
+      : output_(std::move(output_stream)), 
+        buffered_segments(),
+        eof_position(0),
+        eof_seen(false) {}
 
   /*
    * Insert a new substring to be reassembled into a ByteStream.
@@ -29,7 +32,7 @@ public:
    *
    * The Reassembler should close the stream after writing the last byte.
    */
-  void insert( uint64_t first_index, std::string data, bool is_last_substring );
+  void insert(uint64_t first_index, std::string data, bool is_last_substring);
 
   // How many bytes are stored in the Reassembler itself?
   // This function is for testing only; don't add extra state to support it.
@@ -44,7 +47,7 @@ public:
 
 private:
   ByteStream output_;
-  std::map<uint64_t, std:: string> internal_storage;
-  uint64_t eof_index; //index batata current substring ki k kahan end ho rahi, current substring storage se nikli huii bhi ho sakto
-  bool eof_flag; // or same ussi ka flag
+  std::map<uint64_t, std::string> buffered_segments;
+  uint64_t eof_position;
+  bool eof_seen;
 };
