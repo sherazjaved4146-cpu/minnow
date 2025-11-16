@@ -1,11 +1,11 @@
 Checkpoint 2 Writeup
 ====================
 
-My name: [your name here]
+My name: [Muhammad Sheraz Javed,Ahmed hassan]
 
-My SUNet ID: [your sunetid here]
+My SUNet ID: [23L-0591]
 
-I collaborated with: [list sunetids here]
+I collaborated with: [23L-0861]
 
 I would like to thank/reward these classmates for their help: [list sunetids here]
 
@@ -17,7 +17,10 @@ or tested.  Describe benefits and weaknesses of your design compared
 with alternatives -- perhaps in terms of simplicity/complexity, risk
 of bugs, asymptotic performance, empirical performance, required
 implementation time and difficulty, and other factors. Include any
-measurements if applicable.]
+measurements if applicable.
+//for wrap around:
+1)i made a one liner code which converts 64-bits to 32 bits and used type_casting{static_cast<uint32_t>(n)//when value is 2^32-1 -> 0}{benifits ->0(1) complexity 0(1) space complexity and simple}
+]
 
 Implementation Challenges:
 []

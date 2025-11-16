@@ -50,4 +50,5 @@ private:
   std::map<uint64_t, std::string> buffered_segments;
   uint64_t eof_position;
   bool eof_seen;
+
 };
