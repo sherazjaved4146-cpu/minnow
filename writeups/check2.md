@@ -19,7 +19,16 @@ of bugs, asymptotic performance, empirical performance, required
 implementation time and difficulty, and other factors. Include any
 measurements if applicable.
 //for wrap around:
-1)i made a one liner code which converts 64-bits to 32 bits and used type_casting{static_cast<uint32_t>(n)//when value is 2^32-1 -> 0}{benifits ->0(1) complexity 0(1) space complexity and simple}
+(1->wrap function)i made a one liner code which converts 64-bits to 32 bits and used type_casting{static_cast<uint32_t>(n)//when value is 2^32-1 -> 0}{benifits ->0(1) complexity 0(1) space complexity and simple}
+(2->unwrap function)we converted 32-bits sequence packets to again 64 bits for our rescembler file(for application) for that we had 3 cases (better known -> canidate=offset+base) 1->lower canidate(canidate - 2^32) 2->canidate 3->canidate+2^32
+these case are handeled with if else statement (2 wraped around and 1 not wraped)after comparing got the closest match with checkpoint variable that i declared and than returned that;
+
+afterwards i handeled tecp_recieve files:
+in which we have two two parts 1->recieve 2->send
+1->in recieve part ->i just handeled rst flag in first line the capture syn bit if first segment if first segment did'nt come then simply ignored those packets or messages.
+then unwraped from 32-bit seq no to 64 absolute seq number and finally pushes to reassembler 
+2->in send part->we only need to send acks,window_size and setthe rst flag if error.
+that's all
 ]
 
 Implementation Challenges:
