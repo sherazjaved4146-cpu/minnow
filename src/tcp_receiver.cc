@@ -2,7 +2,6 @@
 #include "debug.hh"
 
 using namespace std;
-
 void TCPReceiver::receive( TCPSenderMessage message )
 {
   if ( message.RST ) {
@@ -18,19 +17,24 @@ void TCPReceiver::receive( TCPSenderMessage message )
     return;
   }
 
-  // Use bytes_pushed + 1 as checkpoint (the +1 accounts for SYN)
   uint64_t checkpoint = reassembler_.writer().bytes_pushed() + 1;
   uint64_t abs_seqno = message.seqno.unwrap( isn_.value(), checkpoint );
   
-  // Calculate stream index
-  // abs_seqno 0 = SYN, abs_seqno 1 = first data byte (stream index 0)
-  // If this segment has SYN, the data (if any) starts at abs_seqno + 1
   uint64_t first_data_index = abs_seqno + message.SYN;
-  
-  // Convert to stream index (SYN occupies abs_seqno 0, so subtract 1)
+
+  if ( first_data_index == 0 ) {
+    return;    // ignore invalid byte before stream
+  }
+
   uint64_t stream_index = (first_data_index > 0) ? (first_data_index - 1) : 0;
 
-  // Always call insert - reassembler will handle empty payloads
+  uint64_t first_unacceptable = reassembler_.writer().bytes_pushed()
+                                + reassembler_.writer().available_capacity();
+  
+  if (stream_index >= first_unacceptable) {
+    return;
+  }
+
   reassembler_.insert( stream_index, message.payload, message.FIN );
 }
 

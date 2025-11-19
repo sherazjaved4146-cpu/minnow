@@ -13,22 +13,6 @@ uint64_t Wrap32::unwrap( Wrap32 zero_point, uint64_t checkpoint ) const
   uint64_t base = checkpoint - (checkpoint % (1ULL << 32));
   uint64_t candidate = base + offset;
   
-  uint64_t lower;
-  if (candidate >= (1ULL << 32)) {
-    lower = candidate - (1ULL << 32);
-  } else {
-    lower = 0;
-  }
-  
-  uint64_t upper = candidate + (1ULL << 32);
-  
-  uint64_t dist_lower;
-  if (checkpoint > lower) {
-    dist_lower = checkpoint - lower;
-  } else {
-    dist_lower = lower - checkpoint;
-  }
-  
   uint64_t dist_candidate;
   if (checkpoint > candidate) {
     dist_candidate = checkpoint - candidate;
@@ -36,6 +20,25 @@ uint64_t Wrap32::unwrap( Wrap32 zero_point, uint64_t checkpoint ) const
     dist_candidate = candidate - checkpoint;
   }
   
+  uint64_t result = candidate;
+  uint64_t min_dist = dist_candidate;
+  
+  if (candidate >= (1ULL << 32)) {
+    uint64_t lower = candidate - (1ULL << 32);
+    uint64_t dist_lower;
+    if (checkpoint > lower) {
+      dist_lower = checkpoint - lower;
+    } else {
+      dist_lower = lower - checkpoint;
+    }
+    
+    if (dist_lower < min_dist) {
+      result = lower;
+      min_dist = dist_lower;
+    }
+  }
+  
+  uint64_t upper = candidate + (1ULL << 32);
   uint64_t dist_upper;
   if (checkpoint > upper) {
     dist_upper = checkpoint - upper;
@@ -43,11 +46,9 @@ uint64_t Wrap32::unwrap( Wrap32 zero_point, uint64_t checkpoint ) const
     dist_upper = upper - checkpoint;
   }
   
-  if (dist_lower < dist_candidate && dist_lower < dist_upper) {
-    return lower;
+  if (dist_upper < min_dist) {
+    result = upper;
   }
-  if (dist_upper < dist_candidate) {
-    return upper;
-  }
-  return candidate;
+  
+  return result;
 }

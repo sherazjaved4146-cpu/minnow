@@ -32,10 +32,10 @@ that's all
 ]
 
 Implementation Challenges:
-[]
+[->i got challenges in order to pass the 30 checks so that's why i used the help of gpt]
 
 Remaining Bugs:
-[]
+[-.no bugs all complete]
 
 - If applicable: I received help from a former student in this class,
   another expert, or a chatbot or other AI system (e.g. ChatGPT,
