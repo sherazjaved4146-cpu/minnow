@@ -3,7 +3,7 @@
 #include "byte_stream.hh"
 #include "tcp_receiver_message.hh"
 #include "tcp_sender_message.hh"
-
+#include <queue>
 #include <functional>
 
 class TCPSender
@@ -42,4 +42,30 @@ private:
   ByteStream input_;
   Wrap32 isn_;
   uint64_t initial_RTO_ms_;
+
+  // Sequence number tracking
+  uint64_t next_abs_seqno_ { 0 };
+  bool syn_sent_ { false };
+  bool fin_sent_ { false };
+  
+  // Receiver's window
+  uint64_t recv_ackno_ { 0 };
+  uint16_t recv_window_size_ { 1 };
+  
+  // Outstanding segments queue
+  std::queue<TCPSenderMessage> outstanding_segments_ {};
+  uint64_t bytes_in_flight_ { 0 };
+  
+  // Timer
+  uint64_t timer_ms_ { 0 };
+  uint64_t current_RTO_ms_ { initial_RTO_ms_ };
+  bool timer_running_ { false };
+  
+  // Retransmission counter
+  uint64_t consecutive_retrans_ { 0 };
+  
+  // Helper methods
+  void send_segment( const TCPSenderMessage& msg, const TransmitFunction& transmit );
+  void start_timer();
+  void stop_timer();
 };
