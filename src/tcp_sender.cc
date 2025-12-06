@@ -18,6 +18,7 @@ TCPSenderMessage TCPSender::make_empty_message() const
 {
   TCPSenderMessage msg;
   msg.seqno = Wrap32::wrap( next_abs_seqno_, isn_ );
+  msg.RST = writer().has_error();  // Set RST if stream has error
   return msg;
 }
 
@@ -69,6 +70,7 @@ void TCPSender::push( const TransmitFunction& transmit )
     // Create a new segment
     TCPSenderMessage msg;
     msg.seqno = Wrap32::wrap( next_abs_seqno_, isn_ );
+    msg.RST = writer().has_error();  // ADD THIS LINE - Set RST if stream has error
     
     bool something_sent = false;
     
@@ -117,6 +119,12 @@ void TCPSender::push( const TransmitFunction& transmit )
 
 void TCPSender::receive( const TCPReceiverMessage& msg )
 {
+  // Check for RST flag - if set, mark stream as error
+  if ( msg.RST ) {
+    writer().set_error();
+    return;  // Don't process anything else
+  }
+  
   // Update window size
   recv_window_size_ = msg.window_size;
   
