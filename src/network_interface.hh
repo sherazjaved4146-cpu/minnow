@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <queue>
+#include <map>
 
 // A "network interface" that connects IP (the internet layer, or network layer)
 // with Ethernet (the network access layer, or link layer).
@@ -28,6 +29,7 @@
 // the network interface passes it up the stack. If it's an ARP
 // request or reply, the network interface processes the frame
 // and learns or replies as necessary.
+
 class NetworkInterface
 {
 public:
@@ -82,4 +84,20 @@ private:
 
   // Datagrams that have been received
   std::queue<InternetDatagram> datagrams_received_ {};
+
+  // ARP cache: maps IP address to {Ethernet address, timestamp}
+  std::map<uint32_t, std::pair<EthernetAddress, size_t>> arp_cache_ {};
+  
+  // Pending ARP requests: maps IP address to timestamp of last request
+  std::map<uint32_t, size_t> pending_arp_requests_ {};
+  
+  // Queue of datagrams waiting for ARP resolution: maps IP address to queue of datagrams
+  std::map<uint32_t, std::queue<InternetDatagram>> waiting_datagrams_ {};
+  
+  // Current time in milliseconds
+  size_t current_time_ms_ { 0 };
+  
+  // Constants
+  static constexpr size_t ARP_CACHE_TTL_MS = 30000;  // 30 seconds
+  static constexpr size_t ARP_REQUEST_TTL_MS = 5000;  // 5 seconds
 };
